@@ -35,15 +35,23 @@ export default function NewsletterSubscribe() {
       <h1 className="max-w-lg font-semibold text-2xl sm:text-3xl lg:text-4xl leading-snug sm:leading-snug lg:leading-[44px] mt-3 px-2">
         Subscribe to our Newsletter & Get the Latest News
       </h1>
-      <form onSubmit={handleSubmit}
-        className="flex flex-col sm:flex-row items-center justify-center mt-8 sm:mt-10 border border-slate-600 focus-within:outline focus-within:outline-primary text-sm rounded-full h-auto sm:h-14 max-w-md w-full overflow-hidden">
+      <form
+        onSubmit={handleSubmit}
+        className="relative mt-8 sm:mt-10 flex w-full max-w-3xl flex-col gap-3 px-1 md:block md:px-0"
+      >
         <input
-          type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-          className="bg-transparent outline-none px-4 py-3 sm:py-0 flex-1 text-sm sm:text-base w-full"
-          placeholder="Enter your email address" required
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="h-12 w-full rounded-full border border-slate-600 bg-transparent px-5 text-base text-gray-700 outline-none placeholder:text-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/20 sm:h-14 sm:px-7 sm:text-lg md:pr-64"
+          placeholder="Enter your email address"
+          required
         />
-        <button type="submit" disabled={loading}
-          className="bg-primary hover:bg-primary-dull text-white font-medium rounded-full h-11 px-6 sm:px-8 w-full sm:w-auto mt-3 sm:mt-0 sm:mr-1 flex items-center justify-center disabled:opacity-60 cursor-pointer">
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex h-12 w-full items-center justify-center rounded-full bg-primary px-6 text-base font-medium text-white transition-colors hover:bg-primary-dull disabled:cursor-not-allowed disabled:opacity-60 sm:h-14 sm:text-lg md:absolute md:right-0 md:top-0 md:w-60"
+        >
           {loading ? "Subscribing..." : "Subscribe Now"}
         </button>
       </form>

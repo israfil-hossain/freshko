@@ -14,8 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GreenCart - Fresh Groceries Delivered",
+  title: "Freshko - Fresh Groceries Delivered",
   description: "Fresh groceries delivered to your doorstep",
+  icons: {
+    icon: "/fabicon.svg",
+  },
 };
 
 export default function RootLayout({

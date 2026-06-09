@@ -14,21 +14,54 @@ export default function CategoriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const categories = data?.categories || [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+    if (!editId && !image) {
+      toast.error("Image is required for new categories");
+      return;
+    }
+
     setSaving(true);
     try {
+      const formData = new FormData();
+      formData.append("name", name);
+      if (image) {
+        formData.append("image", image);
+      }
+
       if (editId) {
-        const { data: res } = await api.put(`/api/category/${editId}`, { name });
+        const { data: res } = await api.put(`/api/category/${editId}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         if (res.success) toast.success("Category updated");
         else toast.error(res.message);
       } else {
-        const { data: res } = await api.post("/api/category/add", { name });
+        const { data: res } = await api.post("/api/category/add", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         if (res.success) toast.success("Category added");
         else toast.error(res.message);
       }
@@ -36,6 +69,8 @@ export default function CategoriesPage() {
       setShowForm(false);
       setEditId(null);
       setName("");
+      setImage(null);
+      setImagePreview("");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed");
     } finally {
@@ -57,6 +92,8 @@ export default function CategoriesPage() {
   const handleEdit = (cat: Category) => {
     setEditId(cat._id);
     setName(cat.name);
+    setImagePreview(cat.image || "");
+    setImage(null);
     setShowForm(true);
   };
 
@@ -65,7 +102,13 @@ export default function CategoriesPage() {
       <div className="md:p-10 p-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-medium">Categories</h2>
-          <button onClick={() => { setShowForm(!showForm); setEditId(null); setName(""); }}
+          <button onClick={() => { 
+            setShowForm(!showForm); 
+            setEditId(null); 
+            setName(""); 
+            setImage(null);
+            setImagePreview("");
+          }}
             className="bg-primary text-white px-4 py-2 rounded text-sm cursor-pointer">
             {showForm ? "Cancel" : "+ Add Category"}
           </button>
@@ -77,6 +120,18 @@ export default function CategoriesPage() {
             <input type="text" placeholder="Category name" value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full border rounded px-3 py-2 text-sm outline-none focus:border-primary" required />
+            
+            <div>
+              <label className="block text-sm font-medium mb-2">Category Image</label>
+              <input type="file" accept="image/*" onChange={handleImageChange}
+                className="w-full border rounded px-3 py-2 text-sm outline-none focus:border-primary" />
+              {imagePreview && (
+                <div className="mt-3">
+                  <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded border" />
+                </div>
+              )}
+            </div>
+
             <button type="submit" disabled={saving}
               className="bg-primary text-white px-5 py-2 rounded text-sm cursor-pointer disabled:opacity-50">
               {saving ? "Saving..." : editId ? "Update" : "Create"}
@@ -91,11 +146,12 @@ export default function CategoriesPage() {
         ) : (
           <>
             {/* Desktop table */}
-            <div className="hidden md:block overflow-x-auto max-w-md">
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-gray-300 text-gray-500">
                     <th className="py-3 px-4 font-medium">#</th>
+                    <th className="py-3 px-4 font-medium">Image</th>
                     <th className="py-3 px-4 font-medium">Name</th>
                     <th className="py-3 px-4 font-medium">Actions</th>
                   </tr>
@@ -104,6 +160,11 @@ export default function CategoriesPage() {
                   {categories.map((cat, i) => (
                     <tr key={cat._id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="py-3 px-4 text-gray-500">{i + 1}</td>
+                      <td className="py-3 px-4">
+                        {cat.image && (
+                          <img src={cat.image} alt={cat.name} className="w-12 h-12 object-cover rounded border" />
+                        )}
+                      </td>
                       <td className="py-3 px-4 font-medium">{cat.name}</td>
                       <td className="py-3 px-4 flex gap-2">
                         <button onClick={() => handleEdit(cat)}
@@ -120,13 +181,18 @@ export default function CategoriesPage() {
             {/* Mobile cards */}
             <div className="md:hidden space-y-2">
               {categories.map((cat, i) => (
-                <div key={cat._id} className="border rounded-lg p-4 bg-white flex items-center justify-between">
-                  <p className="font-medium text-sm">{cat.name}</p>
+                <div key={cat._id} className="border rounded-lg p-4 bg-white">
+                  <div className="flex items-center gap-3 mb-3">
+                    {cat.image && (
+                      <img src={cat.image} alt={cat.name} className="w-16 h-16 object-cover rounded border" />
+                    )}
+                    <p className="font-medium text-sm flex-1">{cat.name}</p>
+                  </div>
                   <div className="flex gap-2">
                     <button onClick={() => handleEdit(cat)}
-                      className="text-xs border border-primary text-primary px-3 py-1.5 rounded cursor-pointer">Edit</button>
+                      className="text-xs border border-primary text-primary px-3 py-1.5 rounded cursor-pointer flex-1">Edit</button>
                     <button onClick={() => setDeleteId(cat._id)}
-                      className="text-xs border border-red-300 text-red-500 px-3 py-1.5 rounded cursor-pointer">Delete</button>
+                      className="text-xs border border-red-300 text-red-500 px-3 py-1.5 rounded cursor-pointer flex-1">Delete</button>
                   </div>
                 </div>
               ))}

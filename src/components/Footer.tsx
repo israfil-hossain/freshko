@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="px-6 md:px-16 lg:px-24 xl:px-32 py-12 border-t border-gray-300">
       <div className="flex flex-col md:flex-row justify-between gap-8">
         <div className="max-w-xs">
-          <img src={assets.logo.src} alt="GreenCart" className="w-28 mb-4" />
+          <img src={assets.logo} alt="Freshko" className="w-28 mb-4" />
           <p className="text-sm text-gray-500">
             Fresh groceries delivered to your doorstep. Quality you can trust, savings you will love.
           </p>
@@ -46,7 +46,7 @@ export default function Footer() {
       </div>
 
       <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-gray-400">© 2026 GreenCart. All rights reserved.</p>
+        <p className="text-sm text-gray-400">© 2026 Freshko. All rights reserved.</p>
         <div className="flex gap-4">
           {["Facebook", "Instagram", "LinkedIn", "Twitter", "GitHub"].map((name) => (
             <a key={name} href="#" className="text-gray-400 hover:text-gray-600 text-sm">{name}</a>

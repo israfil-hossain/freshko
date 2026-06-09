@@ -69,7 +69,7 @@ export default function DeliveryManLayout({ children }: { children: React.ReactN
             </svg>
           </button>
           <Link href="/delivery-man/dashboard">
-            <img className="cursor-pointer w-30 md:w-38" src={assets.logo.src} alt="Logo" />
+            <img className="cursor-pointer w-30 md:w-38" src={assets.logo} alt="Logo" />
           </Link>
         </div>
         <div className="flex items-center gap-3 md:gap-5 text-gray-500">
@@ -136,7 +136,7 @@ function DeliveryManLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <img src={assets.logo.src} alt="GreenCart" className="w-28 mx-auto mb-6" />
+        <img src={assets.logo} alt="Freshko" className="w-28 mx-auto mb-6" />
         <h2 className="text-xl font-semibold text-center mb-6">Delivery Man Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="email" placeholder="Email" value={email}

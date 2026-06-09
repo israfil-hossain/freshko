@@ -5,22 +5,36 @@ import Image from "next/image";
 import { useGet } from "@/hooks/useGet";
 import { usePost } from "@/hooks/usePost";
 import { useUIStore } from "@/stores/uiStore";
-import type { Product } from "@/types";
+import type { Category, Product } from "@/types";
 import toast from "react-hot-toast";
 import api from "@/lib/axios";
 
+const PRODUCTS_PER_PAGE = 8;
+
+type ProductListResponse = {
+  success: boolean;
+  products: Product[];
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
 export default function ProductListPage() {
   const currency = useUIStore((s) => s.currency);
+  const [page, setPage] = useState(1);
 
-  const { data, isLoading, refetch } = useGet<{ success: boolean; products: Product[] }>(
-    ["products"],
-    "/api/product/list"
+  const { data, isLoading, refetch } = useGet<ProductListResponse>(
+    ["products", String(page), String(PRODUCTS_PER_PAGE)],
+    `/api/product/list?page=${page}&limit=${PRODUCTS_PER_PAGE}`
   );
 
-  const updateStock = usePost(
+  const updateStock = usePost<{ id: string; quantity: number }, { success: boolean; message?: string }>(
     "/api/product/stock",
     {
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         if (data.success) { toast.success("Stock updated"); refetch(); }
         else toast.error(data.message);
       },
@@ -34,6 +48,27 @@ export default function ProductListPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const products = data?.products || [];
+  const pagination = data?.pagination;
+  const totalProducts = pagination?.total ?? products.length;
+  const totalPages = pagination?.totalPages ?? 1;
+  const currentPage = pagination?.page ?? page;
+  const fromProduct = totalProducts === 0 ? 0 : (currentPage - 1) * PRODUCTS_PER_PAGE + 1;
+  const toProduct = Math.min(currentPage * PRODUCTS_PER_PAGE, totalProducts);
+  const pageOffset = (currentPage - 1) * PRODUCTS_PER_PAGE;
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage < 1 || nextPage > totalPages || nextPage === page) return;
+    setPage(nextPage);
+  };
+
+  const handleDeleteSuccess = () => {
+    setDeleteId(null);
+    if (products.length === 1 && page > 1) {
+      setPage(page - 1);
+    } else {
+      refetch();
+    }
+  };
 
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
@@ -48,6 +83,10 @@ export default function ProductListPage() {
 
         {isLoading ? (
           <p className="text-gray-500">Loading...</p>
+        ) : products.length === 0 ? (
+          <div className="rounded border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-500">
+            No products found.
+          </div>
         ) : (
           <>
             {/* Desktop table */}
@@ -70,7 +109,7 @@ export default function ProductListPage() {
                     <ProductRow
                       key={product._id}
                       product={product}
-                      index={index}
+                      index={pageOffset + index}
                       currency={currency}
                       onUpdateStock={(id, quantity) => updateStock.mutate({ id, quantity })}
                       onEdit={() => { setEditProduct(product); setShowAddModal(true); }}
@@ -84,11 +123,10 @@ export default function ProductListPage() {
 
             {/* Mobile cards */}
             <div className="md:hidden space-y-3">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <MobileProductCard
                   key={product._id}
                   product={product}
-                  index={index}
                   currency={currency}
                   onUpdateStock={(id, quantity) => updateStock.mutate({ id, quantity })}
                   onEdit={() => { setEditProduct(product); setShowAddModal(true); }}
@@ -97,6 +135,15 @@ export default function ProductListPage() {
                 />
               ))}
             </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              from={fromProduct}
+              to={toProduct}
+              total={totalProducts}
+              onPageChange={handlePageChange}
+            />
           </>
         )}
       </div>
@@ -120,9 +167,66 @@ export default function ProductListPage() {
         <DeleteConfirmModal
           productId={deleteId}
           onClose={() => setDeleteId(null)}
-          onSuccess={() => { setDeleteId(null); refetch(); }}
+          onSuccess={handleDeleteSuccess}
         />
       )}
+    </div>
+  );
+}
+
+function Pagination({
+  currentPage, totalPages, from, to, total, onPageChange,
+}: {
+  currentPage: number; totalPages: number; from: number; to: number; total: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) {
+    return (
+      <p className="mt-5 text-sm text-gray-500">
+        Showing {from}-{to} of {total} products
+      </p>
+    );
+  }
+
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <div className="mt-5 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-gray-500">
+        Showing {from}-{to} of {total} products
+      </p>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-9 rounded border border-gray-300 px-3 text-sm text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Previous
+        </button>
+        {pageNumbers.map((pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            onClick={() => onPageChange(pageNumber)}
+            className={`h-9 min-w-9 rounded px-3 text-sm font-medium ${
+              pageNumber === currentPage
+                ? "bg-primary text-white"
+                : "border border-gray-300 text-gray-600 hover:border-primary hover:text-primary"
+            }`}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-9 rounded border border-gray-300 px-3 text-sm text-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
@@ -182,9 +286,9 @@ function ProductRow({
 }
 
 function MobileProductCard({
-  product, index, currency, onUpdateStock, onEdit, onView, onDelete,
+  product, currency, onUpdateStock, onEdit, onView, onDelete,
 }: {
-  product: Product; index: number; currency: string;
+  product: Product; currency: string;
   onUpdateStock: (id: string, quantity: number) => void;
   onEdit: () => void; onView: () => void; onDelete: () => void;
 }) {
@@ -235,7 +339,7 @@ function MobileProductCard({
 }
 
 function ProductFormModal({ product, onClose, onSuccess }: { product: Product | null; onClose: () => void; onSuccess: () => void }) {
-  const { data: catData } = useGet<{ success: boolean; categories: any[] }>(
+  const { data: catData } = useGet<{ success: boolean; categories: Category[] }>(
     ["categories"], "/api/category/list"
   );
   const categories = catData?.categories || [];
@@ -316,7 +420,7 @@ function ProductFormModal({ product, onClose, onSuccess }: { product: Product | 
             <label className="text-xs font-medium text-gray-600">Category</label>
             <select value={category} onChange={(e) => setCategory(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary mt-0.5">
-              {categories.map((c: any) => (
+              {categories.map((c) => (
                 <option key={c._id} value={c.name}>{c.name}</option>
               ))}
             </select>
