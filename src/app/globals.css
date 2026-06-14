@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #009a49;
-  --color-primary-dull: #007a3b;
-  --color-primary/10: color-mix(in srgb, #009a49 10%, transparent);
-  --color-background: #ffffff;
+  --color-primary: #1B3022;
+  --color-primary-dull: #14261A;
+  --color-primary/10: color-mix(in srgb, #1B3022 10%, transparent);
+  --color-primary/5: color-mix(in srgb, #1B3022 5%, transparent);
+  --color-accent: #FF8A00;
+  --color-accent-light: #FFF3E6;
+  --color-background: #F8F7F4;
   --color-foreground: #171717;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -22,4 +25,13 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out;
 }

@@ -11,13 +11,13 @@ export default function BottomBanner() {
           src={assets.bottom_banner_image}
           alt="Why choose us"
           fill
-          className="object-cover hidden md:block bg-green-100"
+          className="object-cover hidden md:block bg-primary/5"
         />
         <Image
           src={assets.bottom_banner_image_sm}
           alt="Why choose us"
           fill
-          className="object-cover md:hidden bg-green-100"
+          className="object-cover md:hidden bg-primary/5"
         />
         <div className='absolute inset-0 flex flex-col items-center justify-center px-4 md:items-end md:justify-center md:pr-24'>
           <div className="w-full max-w-md">

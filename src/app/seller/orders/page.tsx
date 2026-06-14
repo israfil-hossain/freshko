@@ -72,6 +72,7 @@ function OrderCard({ order, currency, deliveryMen, onAssigned }: {
   order: Order; currency: string; deliveryMen: DeliveryMan[]; onAssigned: () => void;
 }) {
   const [assigning, setAssigning] = useState(false);
+  const [autoAssigning, setAutoAssigning] = useState(false);
 
   const handleAssign = async (deliveryManId: string) => {
     if (!deliveryManId || deliveryManId === "none") return;
@@ -84,6 +85,23 @@ function OrderCard({ order, currency, deliveryMen, onAssigned }: {
       toast.error(err instanceof Error ? err.message : "Failed");
     } finally {
       setAssigning(false);
+    }
+  };
+
+  const handleAutoAssign = async () => {
+    setAutoAssigning(true);
+    try {
+      const { data } = await api.post(`/api/order/auto-assign`, { orderId: order._id });
+      if (data.success) {
+        toast.success(`Auto-assigned to ${data.rider?.name || 'rider'}!`);
+        onAssigned();
+      } else {
+        toast.error(data.message || "Auto-assignment failed");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Auto-assignment failed");
+    } finally {
+      setAutoAssigning(false);
     }
   };
 
@@ -128,17 +146,26 @@ function OrderCard({ order, currency, deliveryMen, onAssigned }: {
           </div>
         ) : (
           order.deliveryStatus !== "delivered" && order.deliveryStatus !== "cancelled" && deliveryMen.length > 0 && (
-            <select
-              onChange={(e) => handleAssign(e.target.value)}
-              disabled={assigning}
-              className="text-xs border rounded px-2 py-1 outline-none"
-              defaultValue="none"
-            >
-              <option value="none" disabled>Assign...</option>
-              {deliveryMen.filter(dm => dm.isActive).map((dm) => (
-                <option key={dm._id} value={dm._id}>{dm.name}</option>
-              ))}
-            </select>
+            <div className="space-y-2">
+              <select
+                onChange={(e) => handleAssign(e.target.value)}
+                disabled={assigning || autoAssigning}
+                className="text-xs border rounded px-2 py-1 outline-none w-full"
+                defaultValue="none"
+              >
+                <option value="none" disabled>Assign...</option>
+                {deliveryMen.filter(dm => dm.isActive).map((dm) => (
+                  <option key={dm._id} value={dm._id}>{dm.name}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleAutoAssign}
+                disabled={autoAssigning || assigning}
+                className="w-full text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded px-2 py-1 hover:bg-blue-100 transition-colors disabled:opacity-50"
+              >
+                {autoAssigning ? "Assigning..." : "Auto Assign"}
+              </button>
+            </div>
           )
         )}
       </div>

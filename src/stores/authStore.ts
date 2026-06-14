@@ -9,12 +9,17 @@ interface AuthState {
   user: User | null;
   isSeller: boolean;
   isLoading: boolean;
+  walletBalance: number;
   setUser: (user: User | null) => void;
   setIsSeller: (val: boolean) => void;
   fetchUser: () => Promise<void>;
   fetchSeller: () => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string; user?: User }>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string; user?: User }>;
+  googleLogin: (idToken: string) => Promise<{ success: boolean; message?: string; user?: User }>;
   logout: () => Promise<void>;
   sellerLogout: () => Promise<void>;
+  updateWallet: (amount: number) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -23,9 +28,11 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isSeller: false,
       isLoading: true,
+      walletBalance: 0,
 
       setUser: (user) => set({ user }),
       setIsSeller: (val) => set({ isSeller: val }),
+      updateWallet: (amount) => set((state) => ({ walletBalance: state.walletBalance + amount })),
 
       fetchUser: async () => {
         try {
@@ -51,6 +58,45 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      login: async (email, password) => {
+        try {
+          const { data } = await api.post("/api/user/login", { email, password });
+          if (data.success) {
+            set({ user: data.user });
+            return { success: true, user: data.user };
+          }
+          return { success: false, message: data.message };
+        } catch (err: any) {
+          return { success: false, message: err.message || "Login failed" };
+        }
+      },
+
+      register: async (name, email, password) => {
+        try {
+          const { data } = await api.post("/api/user/register", { name, email, password });
+          if (data.success) {
+            set({ user: data.user });
+            return { success: true, user: data.user };
+          }
+          return { success: false, message: data.message };
+        } catch (err: any) {
+          return { success: false, message: err.message || "Registration failed" };
+        }
+      },
+
+      googleLogin: async (idToken) => {
+        try {
+          const { data } = await api.post("/api/user/google-login", { idToken });
+          if (data.success) {
+            set({ user: data.user });
+            return { success: true, user: data.user };
+          }
+          return { success: false, message: data.message };
+        } catch (err: any) {
+          return { success: false, message: err.message || "Google login failed" };
+        }
+      },
+
       logout: async () => {
         try {
           await api.get("/api/user/logout");
@@ -69,6 +115,6 @@ export const useAuthStore = create<AuthState>()(
         }
       },
     }),
-    { name: "auth-storage", partialize: (state) => ({ isSeller: state.isSeller }) }
+    { name: "auth-storage", partialize: (state) => ({ user: state.user, isSeller: state.isSeller }) }
   )
 );

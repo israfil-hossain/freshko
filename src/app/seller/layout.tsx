@@ -47,10 +47,12 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
 
   const sidebarLinks = [
     { name: "Dashboard", path: "/seller", icon: assets.add_icon },
+    { name: "Analytics", path: "/seller/analytics", icon: assets.product_list_icon },
     { name: "Product List", path: "/seller/product-list", icon: assets.product_list_icon },
     { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
     { name: "Customers", path: "/seller/users", icon: assets.profile_icon },
     { name: "Categories", path: "/seller/categories", icon: assets.box_icon },
+    { name: "Banners", path: "/seller/banners", icon: assets.main_banner_bg },
     { name: "Delivery Men", path: "/seller/delivery-men", icon: assets.delivery_truck_icon },
     { name: "Sub Plans", path: "/seller/subscriptions", icon: assets.box_icon },
     { name: "Subscribers", path: "/seller/subscribers", icon: assets.profile_icon },
@@ -142,7 +144,7 @@ function SellerLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <img src={assets.logo} alt="Freshko" className="w-28 mx-auto mb-6" />
+        <img src={assets.logo} alt="Grocika" className="w-28 mx-auto mb-6" />
         <h2 className="text-xl font-semibold text-center mb-6">Admin Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

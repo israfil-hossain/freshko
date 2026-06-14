@@ -36,7 +36,7 @@ export default function ProductListPage() {
     {
       onSuccess: (data) => {
         if (data.success) { toast.success("Stock updated"); refetch(); }
-        else toast.error(data.message);
+        else toast.error(data.message || "Failed");
       },
       onError: (err) => toast.error(err.message),
     }
@@ -346,16 +346,41 @@ function ProductFormModal({ product, onClose, onSuccess }: { product: Product | 
   const [name, setName] = useState(product?.name || "");
   const [description, setDescription] = useState<string[]>(product?.description || [""]);
   const [category, setCategory] = useState(product?.category || (categories[0]?.name || "Vegetables"));
+  const [subcategory, setSubcategory] = useState(product?.subcategory || "");
+  const [tags, setTags] = useState<string[]>(product?.tags || []);
+  const [tagInput, setTagInput] = useState("");
   const [price, setPrice] = useState(String(product?.price || ""));
   const [offerPrice, setOfferPrice] = useState(String(product?.offerPrice || ""));
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
+  const selectedCategory = categories.find((c) => c.name === category);
+  const subcategories = selectedCategory?.subcategories || [];
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files || []).slice(0, 4);
     setFiles(selected);
     setPreviews(selected.map((f) => URL.createObjectURL(f)));
+  };
+
+  const addTag = () => {
+    const tag = tagInput.trim().toLowerCase();
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+    }
+    setTagInput("");
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((t) => t !== tagToRemove));
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addTag();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -365,23 +390,26 @@ function ProductFormModal({ product, onClose, onSuccess }: { product: Product | 
       const formData = new FormData();
       if (!product) {
         formData.append("productData", JSON.stringify({
-          name, description: description.filter(Boolean), category,
+          name, description: description.filter(Boolean), category, subcategory,
+          tags,
           price: Number(price), offerPrice: Number(offerPrice),
         }));
         files.forEach((f) => formData.append("images", f));
         const { data } = await api.post("/api/product/add", formData);
         if (data.success) { toast.success("Product added!"); onSuccess(); }
-        else toast.error(data.message);
+        else toast.error(data.message || "Failed");
       } else {
         if (files.length > 0) files.forEach((f) => formData.append("images", f));
         formData.append("name", name);
         formData.append("description", JSON.stringify(description.filter(Boolean)));
         formData.append("category", category);
+        formData.append("subcategory", subcategory);
+        formData.append("tags", JSON.stringify(tags));
         formData.append("price", String(price));
         formData.append("offerPrice", String(offerPrice));
         const { data } = await api.put(`/api/product/${product._id}`, formData);
         if (data.success) { toast.success("Product updated!"); onSuccess(); }
-        else toast.error(data.message);
+        else toast.error(data.message || "Failed");
       }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed");
@@ -418,12 +446,46 @@ function ProductFormModal({ product, onClose, onSuccess }: { product: Product | 
           </div>
           <div>
             <label className="text-xs font-medium text-gray-600">Category</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}
+            <select value={category} onChange={(e) => { setCategory(e.target.value); setSubcategory(""); }}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary mt-0.5">
               {categories.map((c) => (
                 <option key={c._id} value={c.name}>{c.name}</option>
               ))}
             </select>
+          </div>
+          {subcategories.length > 0 && (
+            <div>
+              <label className="text-xs font-medium text-gray-600">Subcategory</label>
+              <select value={subcategory} onChange={(e) => setSubcategory(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary mt-0.5">
+                <option value="">None</option>
+                {subcategories.map((sub) => (
+                  <option key={sub._id} value={sub.name}>{sub.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div>
+            <label className="text-xs font-medium text-gray-600">Tags</label>
+            <div className="flex gap-2 mt-0.5">
+              <input type="text" value={tagInput} onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleTagKeyDown}
+                placeholder="Type and press Enter or comma to add"
+                className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary" />
+              <button type="button" onClick={addTag}
+                className="border border-gray-300 rounded px-3 py-2 text-sm text-primary hover:bg-gray-50 cursor-pointer">Add</button>
+            </div>
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {tags.map((tag) => (
+                  <span key={tag} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded-full">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)}
+                      className="hover:text-red-500 cursor-pointer ml-0.5">&times;</button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -483,6 +545,19 @@ function ProductViewModal({ product, currency, onClose }: { product: Product; cu
         )}
         <div className="space-y-2 text-sm">
           <p><span className="text-gray-500">Category:</span> {product.category}</p>
+          {product.subcategory && (
+            <p><span className="text-gray-500">Subcategory:</span> {product.subcategory}</p>
+          )}
+          {product.tags && product.tags.length > 0 && (
+            <div>
+              <span className="text-gray-500">Tags:</span>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {product.tags.map((tag) => (
+                  <span key={tag} className="bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full">{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
           <p><span className="text-gray-500">Price:</span> {currency}{product.price}</p>
           <p><span className="text-gray-500">Offer Price:</span> <span className="text-primary">{currency}{product.offerPrice}</span></p>
           <p><span className="text-gray-500">Stock:</span> {product.quantity} ({product.inStock ? "In Stock" : "Out of Stock"})</p>
@@ -507,7 +582,7 @@ function DeleteConfirmModal({ productId, onClose, onSuccess }: { productId: stri
     try {
       const { data } = await api.delete(`/api/product/${productId}`);
       if (data.success) { toast.success("Product deleted"); onSuccess(); }
-      else toast.error(data.message);
+      else toast.error(data.message || "Failed");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Failed");
     } finally {

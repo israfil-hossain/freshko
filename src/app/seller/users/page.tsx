@@ -40,7 +40,7 @@ export default function SellerUsersPage() {
                     <td className="py-3 px-4 text-gray-600">{user.email}</td>
                     <td className="py-3 px-4">{Object.keys(user.cartItems || {}).length}</td>
                     <td className="py-3 px-4 text-gray-500">
-                      {new Date(user.createdAt).toLocaleDateString()}
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
                     </td>
                   </tr>
                 ))}

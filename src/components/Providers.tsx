@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
+import { useSocketStore } from "@/lib/socket";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const fetchUser = useAuthStore((s) => s.fetchUser);
@@ -13,6 +14,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const user = useAuthStore((s) => s.user);
   const items = useCartStore((s) => s.items);
   const syncCart = useCartStore((s) => s.syncCart);
+  const connectSocket = useSocketStore((s) => s.connect);
+  const disconnectSocket = useSocketStore((s) => s.disconnect);
 
   useEffect(() => {
     fetchUser();
@@ -20,7 +23,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (user) syncCart();
+    if (user) {
+      syncCart();
+      connectSocket(user._id);
+    } else {
+      disconnectSocket();
+    }
   }, [items, user]);
 
   return (

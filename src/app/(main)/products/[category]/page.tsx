@@ -25,7 +25,7 @@ export default function ProductCategoryPage() {
   );
 
   const products = (data?.products || []).filter(
-    (p) => p.category === category
+    (p) => p.category === category || p.subcategory === category
   );
 
   return (

@@ -1,28 +1,134 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { assets } from "@/assets/assets";
+import { useGet } from "@/hooks/useGet";
+
+interface Banner {
+  _id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+  image: string;
+  isActive: boolean;
+  order: number;
+}
 
 export default function MainBanner() {
+  const { data } = useGet<{ success: boolean; banners: Banner[] }>(
+    ["banners-active"],
+    "/api/banner/active"
+  );
+
+  const banners = data?.banners || [];
+  const [current, setCurrent] = useState(0);
+
+  const next = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % banners.length);
+  }, [banners.length]);
+
+  const prev = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + banners.length) % banners.length);
+  }, [banners.length]);
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, [banners.length, next]);
+
+  if (banners.length === 0) {
+    return null;
+  }
+
+  const banner = banners[current];
+
   return (
-    <div className="relative max-h-[50vh] md:max-h-none overflow-hidden mt-10">
-      <img src={assets.main_banner_bg.src} alt="Main Banner" className="w-full hidden md:block" />
-      <img src={assets.main_banner_bg_sm.src} alt="Main Banner" className="w-full md:hidden" />
-      <div className="absolute inset-0 flex flex-col items-center md:items-start justify-end md:justify-center pb-16 md:pb-0 px-4 md:pl-18 lg:pl-24">
-        <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold text-center md:text-left max-w-60 sm:max-w-72 md:max-w-80 lg:max-w-105 leading-snug lg:leading-15 text-black">
-          Fresh Groceries, Delivered Fast & Fresh!
+    <div className="relative h-[400px] md:h-[480px] overflow-hidden rounded-3xl">
+      <Image
+        src={banner.image || "/hero_bg.jpeg"}
+        alt={banner.title}
+        fill
+        className="object-cover"
+        sizes="100vw"
+      />
+
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-transparent" />
+
+      <div className="relative h-full flex flex-col justify-center px-8 md:px-14 lg:px-20 max-w-2xl">
+        {banner.subtitle && (
+          <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white/90 text-xs font-medium px-3 py-1.5 rounded-full w-fit mb-5">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            {banner.subtitle}
+          </div>
+        )}
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-white leading-tight">
+          {banner.title}
         </h1>
-        <div className="flex items-center mt-4 md:mt-6 font-medium">
-          <Link href="/products" className="group flex items-center gap-2 px-5 sm:px-7 md:px-9 py-2.5 md:py-3 bg-primary hover:bg-primary-dull transition rounded text-white cursor-pointer text-sm md:text-base">
-            Shop Now
-            <img className="md:hidden transition group-focus:translate-x-1 w-4 h-4" src={assets.white_arrow_icon.src} alt="arrow" />
+
+        {banner.description && (
+          <p className="mt-4 text-white/70 text-sm md:text-base max-w-md leading-relaxed">
+            {banner.description}
+          </p>
+        )}
+
+        <div className="flex items-center gap-3 mt-7">
+          <Link
+            href={banner.buttonLink || "/products"}
+            className="group flex items-center gap-2 bg-accent hover:bg-accent/90 text-white px-6 py-3 rounded-full font-semibold text-sm transition-all shadow-lg shadow-accent/25"
+          >
+            {banner.buttonText || "Shop Now"}
+            <svg className="w-4 h-4 transition group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
           </Link>
-          <Link href="/products" className="group hidden md:flex items-center gap-2 px-9 py-3 cursor-pointer">
-            Explore Deals
-            <img className="transition group-hover:translate-x-1" src={assets.black_arrow_icon.src} alt="arrow" />
+          <Link
+            href="/products"
+            className="flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-6 py-3 rounded-full font-semibold text-sm transition-all border border-white/20"
+          >
+            Browse Categories
           </Link>
         </div>
       </div>
+
+      {banners.length > 1 && (
+        <>
+          <button
+            onClick={prev}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {banners.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`w-2.5 h-2.5 rounded-full transition cursor-pointer ${
+                  i === current ? "bg-accent scale-110" : "bg-white/40 hover:bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -2,11 +2,12 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  phone: string;
-  avatar: string;
-  cartItems: Record<string, number>;
-  createdAt: string;
-  updatedAt: string;
+  phone?: string;
+  avatar?: string;
+  walletBalance?: number;
+  cartItems?: Record<string, number>;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Product {
@@ -17,8 +18,12 @@ export interface Product {
   offerPrice: number;
   images: string[];
   category: string;
+  subcategory: string;
+  tags: string[];
   quantity: number;
   inStock: boolean;
+  rating?: number;
+  reviewCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -57,6 +62,9 @@ export interface Order {
   isPaid: boolean;
   deliveryStatus: "unassigned" | "assigned" | "picked-up" | "in-transit" | "delivered" | "cancelled";
   deliveryAssignment?: DeliveryAssignment;
+  couponCode?: string;
+  discountAmount?: number;
+  deliveryInstructions?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -89,10 +97,17 @@ export interface DeliveryAssignment {
   updatedAt: string;
 }
 
+export interface Subcategory {
+  _id: string;
+  name: string;
+  image: string;
+}
+
 export interface Category {
   _id: string;
   name: string;
   image: string;
+  subcategories: Subcategory[];
   createdAt: string;
   updatedAt: string;
 }
