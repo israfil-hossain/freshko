@@ -8,7 +8,8 @@ const features = [
       </svg>
     ),
     title: "Free Delivery",
-    description: "Free shipping on orders over $50",
+    description: "On orders over $50",
+    color: "bg-primary/5 text-primary",
   },
   {
     icon: (
@@ -17,7 +18,8 @@ const features = [
       </svg>
     ),
     title: "100% Organic",
-    description: "Certified organic products",
+    description: "Certified fresh produce",
+    color: "bg-success/5 text-success",
   },
   {
     icon: (
@@ -26,7 +28,8 @@ const features = [
       </svg>
     ),
     title: "Same Day Delivery",
-    description: "Get groceries within hours",
+    description: "Get groceries in hours",
+    color: "bg-accent/5 text-accent-dark",
   },
   {
     icon: (
@@ -35,7 +38,8 @@ const features = [
       </svg>
     ),
     title: "Secure Payment",
-    description: "Safe & encrypted checkout",
+    description: "Safe & encrypted",
+    color: "bg-primary/5 text-primary-light",
   },
 ];
 
@@ -45,14 +49,14 @@ export default function FeaturesBar() {
       {features.map((f, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-md transition-shadow"
+          className={`flex items-center gap-3 bg-white border border-border-light rounded-2xl p-4 card-hover animate-fade-in-up delay-${i + 1}`}
         >
-          <div className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-primary/5 text-primary">
+          <div className={`flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-xl ${f.color} transition-transform duration-300 group-hover:scale-110`}>
             {f.icon}
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-gray-900 truncate">{f.title}</h3>
-            <p className="text-xs text-gray-400 mt-0.5 truncate">{f.description}</p>
+            <h3 className="text-sm font-semibold text-foreground truncate">{f.title}</h3>
+            <p className="text-xs text-muted mt-0.5 truncate">{f.description}</p>
           </div>
         </div>
       ))}

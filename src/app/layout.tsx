@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 import { metadata, viewport } from "./metadata";
@@ -33,7 +34,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
-        <script
+        <Script
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {

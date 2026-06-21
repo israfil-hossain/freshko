@@ -5,6 +5,21 @@ import { useGet } from "@/hooks/useGet";
 import { usePost } from "@/hooks/usePost";
 import { useDelete } from "@/hooks/useDelete";
 import toast from "react-hot-toast";
+import {
+  Mail,
+  Users,
+  Send,
+  Trash2,
+  Filter,
+  Newspaper,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  ArrowLeft,
+  Inbox,
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
 
 export default function NewsletterPage() {
   const [tab, setTab] = useState<"subscribers" | "sent" | "compose">("subscribers");
@@ -32,44 +47,74 @@ export default function NewsletterPage() {
   const sentNewsletters = sentData?.newsletters || [];
 
   const tabs = [
-    { key: "subscribers" as const, label: "Subscribers" },
-    { key: "sent" as const, label: "Sent" },
-    { key: "compose" as const, label: "Compose" },
+    { key: "subscribers" as const, label: "Subscribers", icon: Users },
+    { key: "sent" as const, label: "Sent", icon: Newspaper },
+    { key: "compose" as const, label: "Compose", icon: Send },
   ];
 
   const filters = [
-    { key: "all", label: "All" },
-    { key: "active", label: "Active" },
-    { key: "inactive", label: "Inactive" },
+    { key: "all", label: "All", icon: Filter },
+    { key: "active", label: "Active", icon: CheckCircle2 },
+    { key: "inactive", label: "Inactive", icon: XCircle },
   ];
 
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
-      <div className="md:p-10 p-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-medium">Newsletter</h2>
-          <div className="flex gap-2">
-            {tabs.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)}
-                className={`text-sm px-3 py-1.5 rounded cursor-pointer ${
-                  tab === t.key ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}>
-                {t.label}
-              </button>
-            ))}
+      <div className="p-4 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <Link href="/seller" className="w-9 h-9 rounded-xl bg-white border border-border-light flex items-center justify-center hover:bg-surface-hover transition-colors cursor-pointer">
+              <ArrowLeft className="w-4 h-4 text-muted" />
+            </Link>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">Newsletter</h1>
+              <p className="text-xs text-muted mt-0.5">Manage subscribers and send newsletters</p>
+            </div>
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl border border-border-light p-1.5 animate-fade-in-up">
+          <div className="flex gap-1">
+            {tabs.map((t) => {
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    tab === t.key
+                      ? "gradient-primary text-white shadow-sm"
+                      : "text-muted hover:text-foreground hover:bg-surface-hover"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Subscribers Tab */}
         {tab === "subscribers" && (
-          <>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs text-gray-500">{subscribers.length} subscribers</p>
-              <div className="flex gap-2">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted">{subscribers.length} subscribers</p>
+              <div className="flex gap-1.5">
                 {filters.map((f) => (
-                  <button key={f.key} onClick={() => setFilter(f.key)}
-                    className={`text-xs px-2.5 py-1 rounded cursor-pointer ${
-                      filter === f.key ? "bg-primary text-white" : "bg-gray-100 text-gray-600"
-                    }`}>
+                  <button
+                    key={f.key}
+                    onClick={() => setFilter(f.key)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg cursor-pointer transition-all ${
+                      filter === f.key
+                        ? "gradient-primary text-white shadow-sm"
+                        : "bg-white border border-border-light text-muted hover:text-foreground hover:border-border"
+                    }`}
+                  >
+                    <f.icon className="w-3 h-3" />
                     {f.label}
                   </button>
                 ))}
@@ -77,124 +122,206 @@ export default function NewsletterPage() {
             </div>
 
             {subsLoading ? (
-              <p className="text-gray-500 text-sm">Loading...</p>
+              <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-border-light animate-fade-in">
+                <div className="w-9 h-9 border-[3px] border-primary border-t-transparent rounded-full animate-spin mb-3" />
+                <p className="text-sm text-muted animate-pulse">Loading subscribers...</p>
+              </div>
             ) : subscribers.length === 0 ? (
-              <p className="text-gray-400 text-sm">No subscribers yet</p>
+              <div className="bg-white rounded-2xl border border-border-light p-12 text-center animate-fade-in">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-hover flex items-center justify-center">
+                  <Users className="w-8 h-8 text-muted" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">No subscribers yet</h3>
+                <p className="text-sm text-muted">Subscribers will appear here once they sign up</p>
+              </div>
             ) : (
               <>
-                {/* Desktop table */}
-                <div className="hidden md:block overflow-x-auto max-w-6xl">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="border-b border-gray-300 text-gray-500">
-                        <th className="py-3 px-4 font-medium">Email</th>
-                        <th className="py-3 px-4 font-medium">Name</th>
-                        <th className="py-3 px-4 font-medium">Status</th>
-                        <th className="py-3 px-4 font-medium">Subscribed</th>
-                        <th className="py-3 px-4 font-medium">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {subscribers.map((sub: any) => (
-                        <tr key={sub._id} className="border-b border-gray-200 hover:bg-gray-50">
-                          <td className="py-3 px-4">{sub.email}</td>
-                          <td className="py-3 px-4 text-gray-500">{sub.name || "—"}</td>
-                          <td className="py-3 px-4">
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              sub.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
-                            }`}>
-                              {sub.isActive ? "Active" : "Inactive"}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-xs text-gray-400">
-                            {new Date(sub.subscribedAt).toLocaleDateString()}
-                          </td>
-                          <td className="py-3 px-4">
-                            <button onClick={() => deleteSub.mutate({ id: sub._id } as any)}
-                              className="text-xs text-red-500 hover:text-red-700 cursor-pointer">
-                              Delete
-                            </button>
-                          </td>
+                {/* Desktop Table */}
+                <div className="hidden md:block bg-white rounded-2xl border border-border-light overflow-hidden animate-fade-in-up">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border-light">
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Email</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Name</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Status</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Subscribed</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {subscribers.map((sub: any) => (
+                          <tr key={sub._id} className="border-b border-border-light last:border-0 hover:bg-surface-hover transition-colors">
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                  <Mail className="w-4 h-4 text-primary" />
+                                </div>
+                                <span className="font-medium text-foreground">{sub.email}</span>
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5 text-muted">{sub.name || "—"}</td>
+                            <td className="px-5 py-3.5">
+                              <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${
+                                sub.isActive
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "bg-gray-100 text-gray-500"
+                              }`}>
+                                {sub.isActive ? "Active" : "Inactive"}
+                              </span>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-1.5 text-xs text-muted">
+                                <Clock className="w-3 h-3" />
+                                {new Date(sub.subscribedAt).toLocaleDateString()}
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <button
+                                onClick={() => deleteSub.mutate({ id: sub._id } as any)}
+                                className="w-8 h-8 rounded-lg border border-danger/30 text-danger flex items-center justify-center hover:bg-danger/5 transition-all cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
-                {/* Mobile cards */}
+                {/* Mobile Cards */}
                 <div className="md:hidden space-y-3">
                   {subscribers.map((sub: any) => (
-                    <div key={sub._id} className="border rounded-lg p-4 bg-white">
-                      <p className="font-medium text-sm">{sub.email}</p>
-                      <p className="text-xs text-gray-400">{sub.name || "—"}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          sub.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"
+                    <div key={sub._id} className="bg-white rounded-2xl border border-border-light p-4 animate-fade-in-up">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                            <Mail className="w-4 h-4 text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm text-foreground truncate">{sub.email}</p>
+                            <p className="text-xs text-muted truncate">{sub.name || "—"}</p>
+                          </div>
+                        </div>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-lg shrink-0 ${
+                          sub.isActive
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-gray-100 text-gray-500"
                         }`}>
                           {sub.isActive ? "Active" : "Inactive"}
                         </span>
-                        <span className="text-xs text-gray-400">
-                          {new Date(sub.subscribedAt).toLocaleDateString()}
-                        </span>
                       </div>
-                      <button onClick={() => deleteSub.mutate({ id: sub._id } as any)}
-                        className="text-xs text-red-500 mt-2 cursor-pointer">
-                        Delete
-                      </button>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border-light">
+                        <div className="flex items-center gap-1.5 text-xs text-muted">
+                          <Clock className="w-3 h-3" />
+                          {new Date(sub.subscribedAt).toLocaleDateString()}
+                        </div>
+                        <button
+                          onClick={() => deleteSub.mutate({ id: sub._id } as any)}
+                          className="flex items-center gap-1.5 text-xs text-danger hover:text-danger/80 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
               </>
             )}
-          </>
+          </div>
         )}
 
+        {/* Sent Tab */}
         {tab === "sent" && (
-          <>
+          <div className="space-y-4">
             {sentLoading ? (
-              <p className="text-gray-500 text-sm">Loading...</p>
+              <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-border-light animate-fade-in">
+                <div className="w-9 h-9 border-[3px] border-primary border-t-transparent rounded-full animate-spin mb-3" />
+                <p className="text-sm text-muted animate-pulse">Loading sent newsletters...</p>
+              </div>
             ) : sentNewsletters.length === 0 ? (
-              <p className="text-gray-400 text-sm">No newsletters sent yet</p>
+              <div className="bg-white rounded-2xl border border-border-light p-12 text-center animate-fade-in">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-surface-hover flex items-center justify-center">
+                  <Newspaper className="w-8 h-8 text-muted" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">No newsletters sent yet</h3>
+                <p className="text-sm text-muted">Sent newsletters will appear here</p>
+              </div>
             ) : (
               <>
-                <div className="hidden md:block overflow-x-auto max-w-6xl">
-                  <table className="w-full text-sm text-left">
-                    <thead>
-                      <tr className="border-b border-gray-300 text-gray-500">
-                        <th className="py-3 px-4 font-medium">Subject</th>
-                        <th className="py-3 px-4 font-medium">Recipients</th>
-                        <th className="py-3 px-4 font-medium">Sent At</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sentNewsletters.map((n: any) => (
-                        <tr key={n._id} className="border-b border-gray-200 hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{n.subject}</td>
-                          <td className="py-3 px-4">{n.sentTo}</td>
-                          <td className="py-3 px-4 text-xs text-gray-400">
-                            {new Date(n.sentAt).toLocaleString()}
-                          </td>
+                {/* Desktop Table */}
+                <div className="hidden md:block bg-white rounded-2xl border border-border-light overflow-hidden animate-fade-in-up">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border-light">
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Subject</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Recipients</th>
+                          <th className="text-left text-xs font-medium text-muted px-5 py-3 uppercase tracking-wider">Sent At</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {sentNewsletters.map((n: any) => (
+                          <tr key={n._id} className="border-b border-border-light last:border-0 hover:bg-surface-hover transition-colors">
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
+                                  <Send className="w-4 h-4 text-white" />
+                                </div>
+                                <span className="font-medium text-foreground">{n.subject}</span>
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-1.5 text-muted">
+                                <Users className="w-3.5 h-3.5" />
+                                <span>{n.sentTo}</span>
+                              </div>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <div className="flex items-center gap-1.5 text-xs text-muted">
+                                <Clock className="w-3 h-3" />
+                                {new Date(n.sentAt).toLocaleString()}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+
+                {/* Mobile Cards */}
                 <div className="md:hidden space-y-3">
                   {sentNewsletters.map((n: any) => (
-                    <div key={n._id} className="border rounded-lg p-4 bg-white">
-                      <p className="font-medium text-sm">{n.subject}</p>
-                      <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
-                        <span>{n.sentTo} recipients</span>
-                        <span>{new Date(n.sentAt).toLocaleString()}</span>
+                    <div key={n._id} className="bg-white rounded-2xl border border-border-light p-4 animate-fade-in-up">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
+                          <Send className="w-4 h-4 text-white" />
+                        </div>
+                        <p className="font-medium text-sm text-foreground truncate">{n.subject}</p>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-muted pt-3 border-t border-border-light">
+                        <div className="flex items-center gap-1.5">
+                          <Users className="w-3 h-3" />
+                          {n.sentTo} recipients
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3 h-3" />
+                          {new Date(n.sentAt).toLocaleString()}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </>
             )}
-          </>
+          </div>
         )}
 
+        {/* Compose Tab */}
         {tab === "compose" && <ComposeForm refetchSent={refetchSent} />}
       </div>
     </div>
@@ -229,30 +356,77 @@ function ComposeForm({ refetchSent }: { refetchSent: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-        <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary"
-          placeholder="Newsletter subject" required
-        />
+    <div className="max-w-3xl animate-fade-in-up">
+      <div className="bg-white rounded-2xl border border-border-light overflow-hidden">
+        {/* Compose Header */}
+        <div className="px-6 py-4 border-b border-border-light">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <Send className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">Compose Newsletter</h3>
+              <p className="text-xs text-muted">Send a newsletter to all active subscribers</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">Subject</label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm bg-surface-hover focus:bg-white focus:border-primary transition-all outline-none"
+              placeholder="Newsletter subject"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1.5">
+              Email Body <span className="text-muted">(HTML supported)</span>
+            </label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={12}
+              className="w-full border border-border rounded-xl px-4 py-3 text-sm bg-surface-hover focus:bg-white focus:border-primary transition-all outline-none font-mono"
+              placeholder="<h1>Hello!</h1><p>Your newsletter content here...</p>"
+              required
+            />
+          </div>
+
+          <div className="flex items-center gap-3 p-3 bg-surface-hover rounded-xl">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Sending to all active subscribers</p>
+              <p className="text-xs text-muted">This newsletter will be delivered to everyone on your list</p>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={send.isPending}
+            className="w-full gradient-primary text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-primary/20 hover:shadow-xl transition-all disabled:opacity-50 btn-press cursor-pointer flex items-center justify-center gap-2"
+          >
+            {send.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Send Newsletter
+              </>
+            )}
+          </button>
+        </form>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Email Body (HTML supported)
-        </label>
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={12}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary font-mono"
-          placeholder="<h1>Hello!</h1><p>Your newsletter content here...</p>" required
-        />
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500">Sending to all active subscribers</span>
-      </div>
-      <button type="submit" disabled={send.isPending}
-        className="bg-primary text-white px-6 py-2 rounded text-sm font-medium hover:opacity-90 disabled:opacity-50 cursor-pointer">
-        {send.isPending ? "Sending..." : "Send Newsletter"}
-      </button>
-    </form>
+    </div>
   );
 }
