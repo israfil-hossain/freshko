@@ -87,6 +87,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           {[
             { href: "/", label: "Home" },
             { href: "/monthly-bazar", label: "Monthly Bazar" },
+            { href: "/catering", label: "Catering" },
             { href: "/support", label: "Support" },
           ].map((link) => (
             <Link
@@ -307,6 +308,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             {[
               { href: "/", label: "Home" },
               { href: "/monthly-bazar", label: "Monthly Bazar" },
+              { href: "/catering", label: "Catering" },
               { href: "/support", label: "Support" },
             ].map((link) => (
               <Link
