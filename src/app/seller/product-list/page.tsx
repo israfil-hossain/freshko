@@ -275,7 +275,7 @@ function ProductRow({
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${product.inStock ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium ${product.inStock ? "bg-orange-50 text-orange-700" : "bg-red-50 text-red-600"}`}>
               {product.quantity} {product.inStock ? "In Stock" : "Out"}
             </span>
             <button onClick={() => setEditing(true)} className="text-xs text-primary hover:text-primary/80 font-medium cursor-pointer transition-colors">Edit</button>
@@ -333,7 +333,7 @@ function MobileProductCard({
               className="text-xs border border-border px-2.5 py-1.5 rounded-lg cursor-pointer">Cancel</button>
           </div>
         ) : (
-          <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${product.inStock ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+          <span className={`text-xs font-medium px-2.5 py-1 rounded-lg ${product.inStock ? "bg-orange-50 text-orange-700" : "bg-red-50 text-red-600"}`}>
             Stock: {product.quantity}
             <button onClick={() => setEditing(true)} className="text-primary ml-2 font-semibold cursor-pointer">Edit</button>
           </span>
@@ -590,7 +590,7 @@ function ProductViewModal({ product, currency, onClose }: { product: Product; cu
           </div>
           <div className="flex items-center justify-between py-2 border-b border-border-light/60">
             <span className="text-muted">Stock</span>
-            <span className={`font-medium ${product.inStock ? "text-green-600" : "text-red-500"}`}>
+            <span className={`font-medium ${product.inStock ? "text-orange-600" : "text-red-500"}`}>
               {product.quantity} ({product.inStock ? "In Stock" : "Out of Stock"})
             </span>
           </div>

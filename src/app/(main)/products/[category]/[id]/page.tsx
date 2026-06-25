@@ -107,8 +107,8 @@ export default function ProductDetailsPage() {
                 <span className="w-2 h-2 rounded-full bg-orange-500" /> Only {product.quantity} left in stock
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-green-600 bg-green-50 px-3 py-1.5 rounded-lg">
-                <span className="w-2 h-2 rounded-full bg-green-500" /> In Stock ({product.quantity} available)
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg">
+                <span className="w-2 h-2 rounded-full bg-orange-500" /> In Stock ({product.quantity} available)
               </span>
             )}
           </div>
