@@ -208,7 +208,7 @@ export default function BannersPage() {
                 <button type="button" onClick={() => setIsActive(!isActive)}
                   className={`w-full flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                     isActive
-                      ? 'border-green-300 bg-green-50 text-green-700'
+                      ? 'border-orange-300 bg-orange-50 text-orange-700'
                       : 'border-border bg-surface-hover text-muted'
                   }`}>
                   {isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
@@ -281,7 +281,7 @@ export default function BannersPage() {
                       <img src={banner.image} alt={banner.title}
                         className="w-full sm:w-48 h-32 object-cover rounded-xl border border-border-light" />
                       <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-[10px] font-bold ${
-                        banner.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                        banner.isActive ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-500'
                       }`}>
                         {banner.isActive ? 'Active' : 'Inactive'}
                       </div>
@@ -310,7 +310,7 @@ export default function BannersPage() {
                     <button onClick={() => handleToggleActive(banner)}
                       className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                         banner.isActive
-                          ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                          ? 'bg-orange-50 text-orange-700 border border-orange-200 hover:bg-orange-100'
                           : 'bg-surface-hover text-muted border border-border hover:bg-border-light'
                       }`}>
                       {banner.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}

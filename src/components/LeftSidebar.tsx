@@ -68,7 +68,7 @@ export default function LeftSidebar({ mobileOpen, onMobileClose }: LeftSidebarPr
             onClick={handleAllProducts}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
               !activeCategory
-                ? "gradient-primary text-white shadow-sm shadow-primary/20"
+                ? "bg-gray-900 text-white shadow-sm shadow-gray-900/20"
                 : "text-muted hover:bg-surface-hover"
             }`}
           >
@@ -101,7 +101,7 @@ export default function LeftSidebar({ mobileOpen, onMobileClose }: LeftSidebarPr
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                       active
-                        ? "gradient-primary text-white shadow-sm shadow-primary/20"
+                        ? "bg-gray-900 text-white shadow-sm shadow-gray-900/20"
                         : "text-muted hover:bg-surface-hover"
                     }`}
                   >
@@ -127,7 +127,7 @@ export default function LeftSidebar({ mobileOpen, onMobileClose }: LeftSidebarPr
                           onClick={() => handleCategoryClick(sub.name)}
                           className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
                             isActive(sub.name)
-                              ? "bg-primary/10 text-primary font-medium"
+                              ? "bg-gray-900/10 text-gray-900 font-medium"
                               : "text-muted hover:bg-surface-hover hover:text-foreground"
                           }`}
                         >

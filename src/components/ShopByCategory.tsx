@@ -5,27 +5,27 @@ import { useGet } from "@/hooks/useGet";
 import type { Category } from "@/types";
 
 const categoryColors = [
-  "from-green-50 to-emerald-50",
-  "from-red-50 to-rose-50",
-  "from-lime-50 to-green-50",
-  "from-teal-50 to-cyan-50",
-  "from-orange-50 to-amber-50",
-  "from-blue-50 to-sky-50",
-  "from-purple-50 to-violet-50",
-  "from-pink-50 to-fuchsia-50",
-  "from-yellow-50 to-amber-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
+  "from-gray-100 to-gray-50",
 ];
 
 const categoryBorders = [
-  "hover:border-green-200",
-  "hover:border-red-200",
-  "hover:border-lime-200",
-  "hover:border-teal-200",
-  "hover:border-orange-200",
-  "hover:border-blue-200",
-  "hover:border-purple-200",
-  "hover:border-pink-200",
-  "hover:border-yellow-200",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
+  "hover:border-gray-300",
 ];
 
 export default function ShopByCategory() {

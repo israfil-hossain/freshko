@@ -72,8 +72,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       <div className="flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 h-14 md:h-16">
         {/* Left: Logo + Mobile Menu */}
         <div className="flex items-center gap-3 flex-1 md:flex-none justify-start">
-          <button onClick={onMenuClick} className="lg:hidden p-2 -ml-2 hover:bg-primary/5 rounded-xl transition-colors">
-            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onClick={onMenuClick} className="lg:hidden p-2 -ml-2 hover:bg-gray-900/5 rounded-xl transition-colors">
+            <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -95,8 +95,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               href={link.href}
               className={`px-4 py-2 rounded-xl transition-all duration-200 ${
                 pathname === link.href
-                  ? "bg-primary text-white shadow-sm shadow-primary/20"
-                  : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                  ? "bg-gray-900 text-white shadow-sm shadow-gray-900/20"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-900/5"
               }`}
             >
               {link.label}
@@ -107,7 +107,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         {/* Right: Actions */}
         <div className="flex items-center gap-2 md:gap-3">
           {/* Search */}
-          <div className="hidden md:flex items-center bg-gray-50 border border-border-light rounded-xl px-3 py-2 hover:border-primary/20 focus-within:border-primary focus-within:bg-white transition-all duration-200 focus-within:shadow-sm">
+          <div className="hidden md:flex items-center bg-gray-50 border border-border-light rounded-xl px-3 py-2 hover:border-gray-900/20 focus-within:border-gray-900 focus-within:bg-white transition-all duration-200 focus-within:shadow-sm">
             <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -120,8 +120,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           </div>
 
           {/* Cart */}
-          <Link href="/cart" className="relative p-2.5 hover:bg-primary/5 rounded-xl transition-all duration-200 group">
-            <svg className="w-5 h-5 text-gray-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Link href="/cart" className="relative p-2.5 hover:bg-gray-900/5 rounded-xl transition-all duration-200 group">
+            <svg className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
             {cartCount > 0 && (
@@ -145,7 +145,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               <div className="relative" ref={notifRef}>
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2.5 hover:bg-primary/5 rounded-xl transition-all duration-200"
+                  className="relative p-2.5 hover:bg-gray-900/5 rounded-xl transition-all duration-200"
                 >
                   <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -164,7 +164,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       {unreadCount > 0 && (
                         <button
                           onClick={() => { markAllAsRead(); setShowNotifications(false); }}
-                          className="text-xs text-primary font-medium hover:text-primary-light transition-colors"
+                          className="text-xs text-gray-900 font-medium hover:text-gray-900-light transition-colors"
                         >
                           Mark all read
                         </button>
@@ -184,12 +184,12 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                             key={notification._id}
                             onClick={() => { markAsRead(notification._id); setShowNotifications(false); }}
                             className={`px-5 py-3.5 hover:bg-surface-hover cursor-pointer border-b border-border-light last:border-0 transition-colors animate-fade-in-up delay-${Math.min(i + 1, 10)} ${
-                              !notification.isRead ? "bg-primary/[0.03]" : ""
+                              !notification.isRead ? "bg-gray-900/[0.03]" : ""
                             }`}
                           >
                             <div className="flex items-start gap-3">
                               {!notification.isRead && (
-                                <span className="w-2 h-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                                <span className="w-2 h-2 rounded-full bg-gray-900 mt-1.5 flex-shrink-0" />
                               )}
                               <div className="min-w-0">
                                 <p className="text-sm font-medium text-foreground truncate">{notification.title}</p>
@@ -214,9 +214,9 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-2 hover:bg-primary/5 rounded-xl px-2 py-1.5 transition-all duration-200"
+                className="flex items-center gap-2 hover:bg-gray-900/5 rounded-xl px-2 py-1.5 transition-all duration-200"
               >
-                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-semibold text-sm shadow-sm shadow-primary/20">
+                <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-white font-semibold text-sm shadow-sm shadow-gray-900/20">
                   {user.name?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <span className="hidden md:block text-sm font-medium text-gray-700 max-w-[80px] truncate">{user.name?.split(" ")[0]}</span>
@@ -242,7 +242,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={`flex items-center gap-3 px-5 py-2.5 text-sm text-gray-600 hover:text-primary hover:bg-primary/[0.03] transition-colors ${item.mobile ? "md:hidden" : ""}`}
+                        className={`flex items-center gap-3 px-5 py-2.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-900/[0.03] transition-colors ${item.mobile ? "md:hidden" : ""}`}
                         onClick={() => setShowUserMenu(false)}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,15 +269,15 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           ) : (
             <button
               onClick={() => setShowUserLogin(true)}
-              className="text-sm font-medium border border-primary/20 text-primary rounded-xl px-4 py-2 hover:bg-primary hover:text-white transition-all duration-200 hidden md:block btn-press"
+              className="text-sm font-medium border border-gray-900/20 text-gray-900 rounded-xl px-4 py-2 hover:bg-gray-900 hover:text-white transition-all duration-200 hidden md:block btn-press"
             >
               Login
             </button>
           )}
 
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 hover:bg-primary/5 rounded-xl transition-colors">
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 hover:bg-gray-900/5 rounded-xl transition-colors">
             {mobileMenuOpen ? (
-              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
@@ -316,8 +316,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                 href={link.href}
                 className={`text-sm font-medium py-3 px-3 rounded-xl transition-all ${
                   pathname === link.href
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-900/5"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -338,7 +338,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             {!user && (
               <button
                 onClick={() => { setShowUserLogin(true); setMobileMenuOpen(false); }}
-                className="text-sm font-medium bg-primary text-white rounded-xl px-4 py-3 mt-2 btn-press"
+                className="text-sm font-medium bg-gray-900 text-white rounded-xl px-4 py-3 mt-2 btn-press"
               >
                 Login / Sign Up
               </button>
@@ -354,7 +354,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-sm text-gray-600 hover:text-primary py-2.5 px-3 rounded-xl hover:bg-primary/5 transition-all"
+                    className="text-sm text-gray-600 hover:text-gray-900 py-2.5 px-3 rounded-xl hover:bg-gray-900/5 transition-all"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.label}

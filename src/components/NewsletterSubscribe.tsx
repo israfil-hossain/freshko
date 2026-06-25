@@ -28,13 +28,14 @@ export default function NewsletterSubscribe() {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl gradient-primary px-6 sm:px-8 lg:px-12 text-center py-14 sm:py-16 mt-10">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+    <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 rounded-3xl overflow-hidden px-6 sm:px-8 lg:px-12 text-center py-14 sm:py-16 mt-10">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
+      </div>
 
       <div className="relative z-10">
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/80 text-xs font-medium px-4 py-1.5 rounded-full mb-4">
+        <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-xs font-medium px-4 py-1.5 rounded-full mb-4">
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
@@ -44,7 +45,7 @@ export default function NewsletterSubscribe() {
         <h2 className="max-w-lg mx-auto font-bold text-2xl sm:text-3xl text-white leading-snug">
           Stay Updated with Freshko
         </h2>
-        <p className="text-white/60 text-sm mt-2 max-w-md mx-auto">
+        <p className="text-white/70 text-sm mt-2 max-w-md mx-auto">
           Get the latest deals, new products, and grocery tips delivered to your inbox.
         </p>
 
@@ -56,14 +57,14 @@ export default function NewsletterSubscribe() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-13 w-full rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 px-5 text-sm text-white outline-none placeholder:text-white/40 focus:bg-white/15 focus:border-white/40 transition-all sm:h-14 sm:px-7 sm:text-base sm:pr-52"
+            className="h-13 w-full rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 px-5 text-sm text-white outline-none placeholder:text-white/60 focus:bg-white/25 focus:border-white/40 transition-all sm:h-14 sm:px-7 sm:text-base sm:pr-52"
             placeholder="Enter your email address"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="flex h-13 w-full items-center justify-center rounded-2xl bg-accent px-6 text-sm font-semibold text-white transition-all hover:bg-accent-dark hover:shadow-lg hover:shadow-accent/25 disabled:cursor-not-allowed disabled:opacity-60 btn-press sm:h-14 sm:text-base sm:absolute sm:right-1.5 sm:top-1.5 sm:w-48"
+            className="flex h-13 w-full items-center justify-center rounded-2xl bg-white text-primary px-6 text-sm font-semibold transition-all hover:bg-gray-50 hover:shadow-lg hover:shadow-black/10 disabled:cursor-not-allowed disabled:opacity-60 btn-press sm:h-14 sm:text-base sm:absolute sm:right-1.5 sm:top-1.5 sm:w-48"
           >
             {loading ? (
               <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
